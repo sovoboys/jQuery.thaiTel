@@ -1,1 +1,3 @@
-# jquery-thaitel
+# jQuery.thaiTel
+
+### TODO later
