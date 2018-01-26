@@ -1,5 +1,5 @@
 /*
- *  $.thaiTel.js
+ *  jQuery.thaiTel.js
  *
  *  @copyright 2018 - https://www.sovoboys.net/about/ihut
  *  @version: 0.0.0
