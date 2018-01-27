@@ -11,20 +11,44 @@
     .panel-title{
       font-size: 1em
     }
+    pre{
+      display: block;
+      padding: 0;
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.42857143;
+      color: #635e5e;
+      word-break: break-all;
+      word-wrap: break-word;
+      background-color: transparent;
+      border: transparent;
+      font-style: italic;
+    }
   </style>
 </head>
 
 <body>
-  <div class="container">
+  <div class="container-fluid">
     <div class="page-heading">
-      <h1>jQuery.thaiTel - Example.</h1>
+      <h1>jQuery.thaiTel</h1>
       <hr>
     </div>
-    <div class="alert alert-danger">
-      <strong class="">NOT FINISHED YET!</strong>
+  </div>
+  <div id="example-section" class="container-fluid">
+    <div class="page-heading">
+      <h2>Example</h2>
     </div>
     <div class="row">
       <div class="col-lg-4 col-md-6 col-sm-6">
+
+
+
+
+
+
+
+
+
         <div class="panel panel-default">
           <div class="panel-heading">
             <h4 class="panel-title"></h4>
@@ -67,22 +91,157 @@
     </div>
   </div>
 
+  <hr>
+
+  <div id="test-section" class="container-fluid">
+    <div class="page-heading">
+      <h1>Test</h1>
+      <hr>
+    </div>
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="alert alert-info">
+          <ul class="list-unstyled">
+            <li><span class="glyphicon glyphicon-ok text-success"></span> = Result == Expected</li>
+            <li><span class="glyphicon glyphicon-asterisk text-warning"></span> = None expected, and no result (Not supported)</li>
+            <li><span class="glyphicon glyphicon-remove text-danger"></span> = Result != Expected = Error</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="col-sm-12 table-responsive">
+        <table class="table table-hover table-condensed table-striped">
+          <thead>
+            <tr>
+              <th class="col-xs-3">Data <small><code>table tbody > tr[data-phone-number]</code></small></th>
+              <th class="col-xs-4">Remark</th>
+              <th>Expected</th>
+              <th>Result</th>
+              <th class="col-xs-1 text-right"></th>
+            </tr>
+          </thead>
+          <tbody id="test-result"><!-- @see testData.forEach below --></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <script type="text/javascript" src="jquery.thaitel.js"></script>
   <script type="text/javascript">
   $(function (){
 
-    // just to add title text to each example
-    $('[data-phone-number]').each(function (_, e){
+    // ********** example section **********************************************
+
+    // to add title text to each example
+    $('.panel-body[data-phone-number]').each(function (_, e){
       let $title = $(e).prev('.panel-heading').find('>.panel-title');
-      $title.is(':empty') && $title.text('[data-phone-number="' + $(e).data('phoneNumber') + '"]');
+      $title.text('[data-phone-number="' + $(e).data('phoneNumber') + '"]' + ($(e).data('forceCc') ? '[data-force-cc="' + $(e).data('forceCc') + '"]' : ''));
     });
 
-    if ($.fn.thaiTel) {
-      // call the plugin
-      $('[data-phone-number]').thaiTel();
+    if (typeof jQuery == typeof function(){}) {
+      if ($.fn.thaiTel) {
+        // call the plugin (for example section)
+        $('#example-section [data-phone-number]').thaiTel();
+      } else {
+        console.error('Requires $.fn.thaiTel.');
+      }
     } else {
-      console.error('Requires $.fn.thaiTel.')
+      alert('Error: jQuery required.');
+      console.error('Error: Requires jQuery.');
+    }
+
+    // ********** test section *************************************************
+    let
+      testData = [
+        'Simple format',
+        ['023456789', 'Only numeric', '023456789'],
+        ['055-666-777', 'Numeric and dash', '055666777'],
+        ['098 765 4321', 'Numeric and spaces', '0987654321'],
+        ['02 345—6789', 'Numeric, space and em—dash', '023456789'],
+        ['1112', '(* Not supported) Special numbers are not supported', '-'],
+        ['๐๒ ๓๔๕ ๖๗๘๙', '(* Not supported) Thai numeric are not supported', '-'],
+        ['(055) 666 777', '(* Not supported) Old format are not supported', '-'],
+
+        'With country code',
+        ['+66 2345 6789', '', '+6623456789'],
+        ['6655-666-777', 'Without + sign', '+6655666777'],
+        ['+6698 765 4321', 'use attr[data-force-cc="0"] to force using "0" as country code', '0987654321', '0'],
+        ['+66 (0)98-765-4321', 'both +66 and (0)', '+66987654321'],
+        ['0(+66) 2-345-6789', '0 and (+66)', '023456789'],
+
+        'Multi numbers',
+        ['02 345-6789, 098 765-4321', 'comma seperate 2 numbers', '023456789, 0987654321'],
+
+        '(Thai-style) range numbers',
+        ['02 123-4567-9', '7 "to" 9', '021234567, 021234568, 021234569'],
+        ['055 666777-81', '77 - 81 (2 digits range)', '055666777, 055666778, 055666779, 055666780, 055666781'],
+        ['098-7654321-23', 'Nonsense 2 digits', '0987654321, 0987654322, 0987654323'],
+        ['02 345-6789-92, 098 765-4321', 'Mixed: range and comma', '023456789, 023456790, 023456791, 023456792, 0987654321'],
+        ['055 666777-7890', '* This plugin only supported 3 digits for Thai style range (and accept options.maxGeneratedRange numbers, so this case only render the first one)', '055666777'],
+
+        'Postfix',
+        ['+662 345-6789-91 (ต่อ 123)', 'Postfix ignored', '+6623456789, +6623456790, +6623456791'],
+        ['055 666 777 11:30 - 17:30 น.', 'Plugin may not parse / solve for some ambiguous postfix, especially when the last digit of number followed by another numeric.', '055666777'],
+        ['02 345-6789 (11:30 - 17:30 น.)', '', '023456789'],
+
+
+      ],
+      $stage = $('#test-section #test-result')
+    ;
+
+    testData.forEach(function (data){
+      let $tr;
+      if (Array.isArray(data)) {
+        $tr = $('<tr>').attr('data-phone-number', data[0]);
+        ['data-display', 'remark', 'expected', 'result', 'comparison', ].forEach(function (cls){
+          let $td = $('<td>').addClass(cls);
+          cls == 'data-display'        && $td.append($('<pre>').text(data[0]));
+          cls == 'remark' && data[1]   && $td.append($('<small>').addClass('text-muted').text(data[1]));
+          cls == 'expected' && data[2] && $td.append($('<span>').text(data[2]));
+          cls == 'result'              && $td.addClass('text-primary');
+          cls == 'comparison'          && $td.addClass('text-right');
+          $tr.append($td);
+        });
+        typeof data[3] == typeof ''    && $tr.attr('data-force-cc', data[3]);
+      } else if (typeof data == typeof '') {
+        $tr = $('<tr>').addClass('subhead');
+        $tr.append($('<td>').attr('colspan', 5).addClass('text-muted').append($('<h5>').text(data)));
+      }
+      $stage.append($tr);
+    });
+
+    let compareResult = function ($stage, result) {
+      let $expected = $stage.find('>td.expected'), $result = $stage.find('>td.result'), $cmp = $stage.find('>td.comparison'), data = [];
+      if (Array.isArray(result) && result.length) {
+        result.forEach(function (e){
+          typeof e.parsedForceCC == typeof '' && data.push(e.parsedForceCC);
+        });
+        $result.text(data.join(', '));
+        //console.log($expected.text(), 'xxx', $result.text())
+        $cmp.append($('<span>').addClass('glyphicon ' + ($expected.text() === $result.text() ? 'glyphicon-ok text-success' : 'glyphicon-remove text-danger')));
+      } else {
+        data = false;
+        $cmp.append($('<span>').addClass('glyphicon ' + ($expected.text() === '-' ? 'glyphicon-asterisk text-warning' : 'glyphicon-remove text-danger')));
+      }
+    };
+
+    if (typeof jQuery == typeof function(){}) {
+      if ($.fn.thaiTel) {
+        $('#test-section #test-result tr[data-phone-number]').thaiTel({
+          render: function (result, $stage, input) {
+            compareResult($stage, result);
+          },
+          fail:   function ($stage, input) {
+            compareResult($stage, null);
+          },
+        });
+      } else {
+        console.error('Requires $.fn.thaiTel.');
+      }
+    } else {
+      alert('Error: jQuery required.');
+      console.error('Error: Requires jQuery.');
     }
 
   });

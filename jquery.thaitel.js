@@ -8,16 +8,17 @@
  (function($){
 $.fn.thaiTel = function(options, param2){
 
+  // handle given params
   if (typeof options == typeof function(){}) {
     options = {render: options};
   } else if (typeof options != typeof {}) {
     options = {};
   }
-
   if (typeof param2 == typeof function(){}) {
     options.fail = param2;
   }
 
+  // merge params with default settings
   let settings = $.extend({
     forceUseCC: null,
     maxGeneratedRange: 20,
@@ -51,7 +52,7 @@ $.fn.thaiTel = function(options, param2){
     },
   }, options);
 
-  //****************************************************************************
+  //************ private *******************************************************
 
   let
     regexNumber = new RegExp(
@@ -76,21 +77,21 @@ $.fn.thaiTel = function(options, param2){
         ')' +
         // ▲ country code +66|0 ▲
         // ▼ numbers ▼
-        '[\\- ]*' +
+        '[\\-\\— ]*' +
         '(?:' +
             // ▼ starts with 2 or [8-9][0-9] ▼
             '(2|[89] *[0-9])' +   // starts with 2 or [8-9][0-9]
-            '[\\- ]*' +
+            '[\\-\\— ]*' +
             '(' +
-              '(?:[0-9][\\- ]*){6}[0-9]' +  // and 7 digits after
+              '(?:[0-9][\\-\\— ]*){6}[0-9]' +  // and 7 digits after
             ')' +
             // ▲ starts with 2 or [8-9][0-9] ▲
           '|' +   // ..or..
             // ▼ starts with [3-7][1-9] ▼
             '([3-7] *[1-9])' +  // starts with [3-7][1-9]
-            '[\\- ]*' +
+            '[\\-\\— ]*' +
             '(' +
-              '(?:[0-9][\\- ]*){5}[0-9]' +  // and 6 digits after
+              '(?:[0-9][\\-\\— ]*){5}[0-9]' +  // and 6 digits after
             ')' +
             // ▲ starts with [3-7][1-9] ▲
         ')' +
@@ -233,14 +234,16 @@ $.fn.thaiTel = function(options, param2){
       return str;
     },
     _forceUseCC = function (str, forceUseCC) {
-      if ((forceUseCC || settings.forceUseCC) === '0') {
+      let force = ((forceUseCC === null || typeof forceUseCC == typeof undefined) ? settings.forceUseCC : forceUseCC) + ''
+      if (force === '0') {
         return str.replace(/^(\+?66)/, '0');
-      } else if ((forceUseCC || settings.forceUseCC) === '+66') {
+      } else if (force === '+66') {
         return str.replace(/^(0)/, '+66');
       }
       return str;
     }
   ;
+
   //****************************************************************************
 
   this.each(function() {
