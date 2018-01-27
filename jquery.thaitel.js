@@ -2,19 +2,11 @@
  *  jQuery.thaiTel.js
  *
  *  @copyright 2018 - https://www.sovoboys.net/about/ihut
- *  @version: 0.0.0
+ *  @version: 0.0.1
  */
 
- /**
- # TODO
- - force settings.useCCAs
- - remove non-numeric
- - handle parsed.postfix
- - do default render
- - do default onError - need to add param 2
- **/
  (function($){
-$.fn.thaiTel = function(options){
+$.fn.thaiTel = function(options, param2){
 
   if (typeof options == typeof function(){}) {
     options = {render: options};
@@ -22,41 +14,122 @@ $.fn.thaiTel = function(options){
     options = {};
   }
 
+  if (typeof param2 == typeof function(){}) {
+    options.fail = param2;
+  }
+
   let settings = $.extend({
-    render: function (){/* # FIXME */},
-    useCCAs: '0',
+    forceUseCC: null,
     maxGeneratedRange: 20,
+    render: function (numbers, $stage, inputData){
+      // default render() - render one .btn or .btn-group dropdown (twitter bootstrap v3)
+      let $ele = $('<div>').addClass('btn-group'),
+        $mainBtn = $('<button>').addClass('btn btn-info dropdown-toggle').attr({type: 'button', 'data-toggle': 'dropdown', 'aria-haspopup': true, 'aria-expanded': false}),
+        $mainBtnLabel = $('<span>').append($('<span>').addClass('glyphicon glyphicon-earphone')).append($('<span>').text(' ' + inputData + ' ')).append($('<span>').addClass('caret')),
+        $ul = $('<ul>').addClass('dropdown-menu')
+      ;
+      $mainBtn.append($mainBtnLabel).appendTo($ele);
+      numbers.forEach(function (number){
+        let $li = $('<li>'), $a = $('<a>').attr('href', 'tel:' + number.parsedForceCC).append($('<span>').addClass('glyphicon glyphicon-earphone')).append($('<span>').text(' ' + number.formatted));
+        $li.append($a).appendTo($ul);
+      });
+      $ele.append($ul);
+
+      $ele.appendTo($stage);
+    },
+    fail: function ($stage, inputData){
+      // default fail() *on failed to parse all phone numbers for an element
+      let $ele = $('<div>').addClass('btn-group'),
+        $mainBtn = $('<button>').addClass('btn btn-warning dropdown-toggle').attr({type: 'button', 'data-toggle': 'dropdown', 'aria-haspopup': true, 'aria-expanded': false}),
+        $mainBtnLabel = $('<span>').append($('<span>').addClass('glyphicon glyphicon-earphone')).append($('<span>').text(' ')).append($('<span>').addClass('glyphicon glyphicon-exclamation-sign')).append($('<span>').text(' ' + inputData + ' ')).append($('<span>').addClass('caret')),
+        $ul = $('<ul>').addClass('dropdown-menu'),
+        $li = $('<li>'), $a = $('<a>').attr('href', 'tel:' + inputData).append($('<span>').addClass('glyphicon glyphicon-earphone')).append($('<span>').text(' ' + inputData))
+      ;
+      $li.append($a).appendTo($ul);
+      $mainBtn.append($mainBtnLabel).appendTo($ele);
+      $ele.append($ul).appendTo($stage);
+    },
   }, options);
 
   //****************************************************************************
 
   let
-    regexNumber = /^(?:(\( ?0 ?\)|0) {0,2}(?:\( ?\+? ?66 ?\)|)|(\( ?\+? ?66 ?\)|\+? ?66) {0,2}(?:\( ?0 ?\)|))[\- ]*(?:(2|[89] *[0-9])[\- ]*((?:[0-9][\- ]*){6}[0-9])|([3-7] *[1-9])[\- ]*((?:[0-9][\- ]*){5}[0-9])) *(.*)$/,
+    regexNumber = new RegExp(
+      '^' + //
+        // ▼ country code 0|+66 ▼
+        '(?:' +
+            '(' +
+              '\\( ?0 ?\\)|0' + // use 0
+            ')' +
+            ' {0,2}' +
+            '(?:' +
+              '\\( ?\\+? ?66 ?\\)|\\+? ?66|' +  // may followed by +66
+            ')' +
+          '|' +   // ..or..
+            '(' +
+              '\\( ?\\+? ?66 ?\\)|\\+? ?66' +   // use 66
+            ')' +
+            ' {0,2}' +
+            '(?:' +
+              '\\( ?0 ?\\)|0|' +  // may followed by 0
+            ')' +
+        ')' +
+        // ▲ country code +66|0 ▲
+        // ▼ numbers ▼
+        '[\\- ]*' +
+        '(?:' +
+            // ▼ starts with 2 or [8-9][0-9] ▼
+            '(2|[89] *[0-9])' +   // starts with 2 or [8-9][0-9]
+            '[\\- ]*' +
+            '(' +
+              '(?:[0-9][\\- ]*){6}[0-9]' +  // and 7 digits after
+            ')' +
+            // ▲ starts with 2 or [8-9][0-9] ▲
+          '|' +   // ..or..
+            // ▼ starts with [3-7][1-9] ▼
+            '([3-7] *[1-9])' +  // starts with [3-7][1-9]
+            '[\\- ]*' +
+            '(' +
+              '(?:[0-9][\\- ]*){5}[0-9]' +  // and 6 digits after
+            ')' +
+            // ▲ starts with [3-7][1-9] ▲
+        ')' +
+        // ▲ numbers ▲
+        ' *' +
+        '(.*)' +  // ** postfix, needs to validate this data - @see regexAcceptablePostfix
+      '$'
+    ),
     regexAcceptablePostfix = /^([^0-9]+(.+)|)$/,
     regexThaiRangePostfix = /^\s*(?:\-|ถึง|to.?|\—)\s*([0-9]{1,3})(?:[^0-9]+.*|)\s*$/i,
-    _parse = function (str) {
+    _parse = function (str, forceUseCC) {
       let
         result = [],
         splitted = str.split(/\s*\,\s*/)
       ;
       // split string using ,
       splitted.forEach(function (each){
-        each = _parseEach(each);
+        each = _parseEach(each, forceUseCC);
         if (each.wellFormed) {
-          result.push(each.parsed);
+          result.push(each);
+
           let rangeTo = each.postfix ? each.postfix.match(regexThaiRangePostfix) : null;
           if (Array.isArray(rangeTo) && rangeTo.length == 2 && /^[0-9]+$/.test(rangeTo[1])) {
             // do shift until rangeTo[1] or settings.maxGeneratedRange
             let range = _generateRangeNumberStr(each.parsed, rangeTo[1]);
             if (Array.isArray(range)) {
-              result = result.concat(range);
+              range.forEach(function (eachRange){
+                eachRange = _parseEach(eachRange, forceUseCC);
+                if (eachRange.wellFormed) {
+                  result.push(eachRange);
+                }
+              });
             }
           }
         }
       })
       return result;
     },
-    _parseEach = function (e) {
+    _parseEach = function (e, forceUseCC) {
       let ped = {
         wellFormed: false,
         raw: e,
@@ -69,6 +142,7 @@ $.fn.thaiTel = function(options){
         isMobileNumber: false,
         postfix: null,
         parsed: null,
+        parsedForceCC: null,
         formatted: null,
       };
 
@@ -104,9 +178,10 @@ $.fn.thaiTel = function(options){
           ped.number_p2 = ped.number_p2.replace(/[^0-9]+/mg, '');
           ped.number = ped.number_p1 + ped.number_p2;
           ped.parsed = ped.cc + ped.number;
+          ped.parsedForceCC = _forceUseCC(ped.parsed, forceUseCC);
+          ped.formatted = _formatNumberStr(ped.parsedForceCC);
         }
       }
-
       return ped;
     },
     _generateRangeNumberStr = function (main, toPostfix)
@@ -143,6 +218,27 @@ $.fn.thaiTel = function(options){
         result = l + r;
       }
       return result;
+    },
+    _formatNumberStr = function (str) {
+      let regex1 = /^(\+66|0)(2)([0-9]{3})([0-9]{4})$/,
+        regex2 = /^(\+66|0)([89][0-9])([0-9]{3})([0-9]{4})$/,
+        regex3 = /^(\+66|0)([3-7][1-9])([0-9]{3})([0-9]{3})$/;
+      if (regex1.test(str)) {
+        return str.replace(regex1, '$1$2-$3-$4');
+      } else if (regex2.test(str)) {
+        return str.replace(regex2, '$1$2-$3-$4');
+      } else if (regex3.test(str)) {
+        return str.replace(regex3, '$1$2-$3-$4');
+      }
+      return str;
+    },
+    _forceUseCC = function (str, forceUseCC) {
+      if ((forceUseCC || settings.forceUseCC) === '0') {
+        return str.replace(/^(\+?66)/, '0');
+      } else if ((forceUseCC || settings.forceUseCC) === '+66') {
+        return str.replace(/^(0)/, '+66');
+      }
+      return str;
     }
   ;
   //****************************************************************************
@@ -150,14 +246,28 @@ $.fn.thaiTel = function(options){
   this.each(function() {
     let
       $self = $(this),
-      str = ($self.data('phoneNumber') || '') + ''
-      //_parse(str);
+      str = ($self.data('phoneNumber') || '') + '',
+      parsed = null
     ;
-    console.warn('>>>>>>>>>>>>>>>>>>>>>>>>>>', str, _parse(str));
-  });
+    if (! $self.data('parsedThaiTel')) {
+      parsed = _parse(str, $self.data('forceCc'));
+      if (Array.isArray(parsed) && parsed.length) {
+        if (typeof settings.render == typeof function(){}) {
+          settings.render(parsed, $self, str);
+        } else {
+          throw "$.fn.thaiTel requires options.render as a callable.";
+        }
+      } else {
+        if (typeof settings.fail == typeof function(){}) {
+          settings.fail($self, str);
+        } else {
+          throw "$.fn.thaiTel requires options.fail as a callable.";
+        }
+      }
+      $self.data('parsedThaiTel', true); // add this data to avoid recall
+    }
 
+  });
   return this
 };
 }(jQuery));
-
-console.warn('NOT READY YET!');

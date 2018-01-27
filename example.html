@@ -5,51 +5,86 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>jQuery.thaiTel</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <style type="text/css">
+    .panel-title{
+      font-size: 1em
+    }
+  </style>
 </head>
+
 <body>
-  <h1 class="">NOT FINISHED YET!</h1>
-  <div class="thai-phone-number" data-phone-number="191"></div>
-  <div class="thai-phone-number" data-phone-number="023456789"></div>
-  <div class="thai-phone-number" data-phone-number="035456784"></div>
-  <div class="thai-phone-number" data-phone-number="02-987-6543"></div>
-  <div class="thai-phone-number" data-phone-number="+66 (0) 2987 6543"></div>
-  <div class="thai-phone-number" data-phone-number="+662-712-7000"></div>
-  <div class="thai-phone-number" data-phone-number="66-81-234-5678"></div>
-  <div class="thai-phone-number" data-phone-number="+6681-234-5678"></div>
-  <div class="thai-phone-number" data-phone-number="081 234 5678"></div>
-  <div class="thai-phone-number" data-phone-number="02-5555555      , 089-9999999"></div>
-  <div class="thai-phone-number" data-phone-number="02-5555555      , 089-1111111-13"></div>
-  <div class="thai-phone-number" data-phone-number=" 023456789"></div>
-  <div class="thai-phone-number" data-phone-number="  023456789"></div>
-  <div class="thai-phone-number" data-phone-number="  023456789    "></div>
-  <div class="thai-phone-number" data-phone-number="  023456789"></div>
-  <div class="thai-phone-number" data-phone-number="0 876 543 210"></div>
-  <div class="thai-phone-number" data-phone-number="  02-345-6789,
-  098-12-34-567-8,
-  098-76-54-321,
-  "></div>
+  <div class="container">
+    <div class="page-heading">
+      <h1>jQuery.thaiTel - Example.</h1>
+      <hr>
+    </div>
+    <div class="alert alert-danger">
+      <strong class="">NOT FINISHED YET!</strong>
+    </div>
+    <div class="row">
+      <div class="col-lg-4 col-md-6 col-sm-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h4 class="panel-title"></h4>
+          </div>
+          <div data-phone-number="+66 (0)98-765-4321" class="panel-body"></div>
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-6 col-sm-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h4 class="panel-title"></h4>
+          </div>
+          <div data-phone-number="055 123 456-7" class="panel-body"></div>
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-6 col-sm-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h4 class="panel-title"></h4>
+          </div>
+          <div data-phone-number="055 123 456-7" data-force-cc="+66" class="panel-body"></div>
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-6 col-sm-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h4 class="panel-title"></h4>
+          </div>
+          <div data-phone-number="023 456 789 ต่อ 2315" class="panel-body"></div>
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-6 col-sm-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h4 class="panel-title"></h4>
+          </div>
+          <div data-phone-number="1234567890-11 abcdefg???" class="panel-body"></div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-  <hr>
-
-  <div class="thai-phone-number" data-phone-number="+6681-234-56789"></div>
-  <div class="thai-phone-number" data-phone-number="089-234-5678901234"></div>
-  <div class="thai-phone-number" data-phone-number="0754910891"></div>
-  <div class="thai-phone-number" data-phone-number="075491081-7"></div>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <script type="text/javascript" src="jquery.thaitel.js"></script>
   <script type="text/javascript">
   $(function (){
 
-
+    // just to add title text to each example
     $('[data-phone-number]').each(function (_, e){
-      $(e).text($(e).data('phoneNumber'));
+      let $title = $(e).prev('.panel-heading').find('>.panel-title');
+      $title.is(':empty') && $title.text('[data-phone-number="' + $(e).data('phoneNumber') + '"]');
     });
 
     if ($.fn.thaiTel) {
-      $('.thai-phone-number').thaiTel();
+      // call the plugin
+      $('[data-phone-number]').thaiTel();
     } else {
       console.error('Requires $.fn.thaiTel.')
     }
+
   });
   </script>
 </body>
