@@ -2,7 +2,7 @@
 
 # **jQuery.thaiTel**
 
-This plugin is written for dealing with **(mainly) Thai phone numbers**, especially unformatted, Thai-style numbers, to be able to use with tasks which requires formatted phone numbers. For example, to pass phone numbers to some phone call management apps/softwares via ```<a href="tel:*"></a>``` link protocol.
+This plugin is written for dealing with **(mainly, actually only) Thai phone numbers**, especially unformatted, Thai-(various)-style numbers, to be able to use with tasks which requires proper formatted phone numbers. For example, to pass phone numbers to some phone call management apps/softwares via ```<a href="tel:*"></a>``` link protocol.
 
 ## **Disclaimer**
 
@@ -10,20 +10,20 @@ This plugin is written for dealing with **(mainly) Thai phone numbers**, especia
 
 ## **Example**
 
-\# TODO
+See [here](https://www.sovoboys.net/p/github/jquery.thaitel)
 
 ## **Usage**
 
-Creat element(s), and add [data-phone-number] attribute, for example..
+Creat element(s), and add phone number(s) to its [data-phone-number] attribute, for example..
 ```
-<div data-phone-number="089-987-6543"></div>
-<div data-phone-number="+66 2 234 5678"></div>
+<div data-phone-number="098-765-4321"></div>
+<div data-phone-number="+66 2 345 6789 - 90"></div>
 
 <!-- data-force-cc are optional -->
-<div data-phone-number="+66 (0) 2 1234567" data-force-cc="0"></div>
+<div data-phone-number="055 666777" data-force-cc="+66"></div>
 ```
 
-Include jQuery and plugin:
+And include jQuery and plugin:
 ```
 <script type="text/javascript" src="/path/to/jquery.js"></script>
 <script type="text/javascript" src="/path/to/jquery.thaitel.js"></script>
@@ -34,7 +34,7 @@ And call the plugin
 $('[data-phone-number]').thaiTel()
 ```
 
-## **Options **
+## **Options**
 
 |Key|Accept values|Default value|Description|
 |:---|:------------|:------------|:----------|
@@ -43,4 +43,5 @@ $('[data-phone-number]').thaiTel()
 |render|_function_|_(function to render numbers as Twitter Bootstrap v3's .btn-group)_|Called when one or more numbers returned after parsed.|
 |fail|_function_|_(function similar as render, but only for input value)_|Called when no numbers returned after parsed.|
 
+## **License**
 \# TODO
