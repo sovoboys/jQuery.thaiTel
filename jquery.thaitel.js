@@ -1,8 +1,12 @@
 /*
  *  jQuery.thaiTel.js
  *
- *  @copyright 2018 - https://www.sovoboys.net/about/ihut
- *  @version: 0.0.1
+ *  Copyright 2018, Phongphatt Cheewahkidakarn - https://www.sovoboys.net/about/ihut
+ *  Released under the WTFPL license
+ *  http://www.wtfpl.net/
+ *
+ *  Github: https://github.com/sovoboys/jQuery.thaiTel
+ *  Version: 0.0.1
  */
 
  (function($){
@@ -119,7 +123,7 @@ $.fn.thaiTel = function(options, param2){
             let range = _generateRangeNumberStr(each.parsed, rangeTo[1]);
             if (Array.isArray(range)) {
               range.forEach(function (eachRange){
-                eachRange = _parseEach(eachRange, forceUseCC);
+                eachRange = _parseEach(eachRange, forceUseCC, each.raw);
                 if (eachRange.wellFormed) {
                   result.push(eachRange);
                 }
@@ -130,10 +134,10 @@ $.fn.thaiTel = function(options, param2){
       })
       return result;
     },
-    _parseEach = function (e, forceUseCC) {
+    _parseEach = function (e, forceUseCC, forceRaw = null) {
       let ped = {
         wellFormed: false,
-        raw: e,
+        raw: forceRaw || e,
         captured: null,
         cc: null,
         number: null,
@@ -182,6 +186,9 @@ $.fn.thaiTel = function(options, param2){
           ped.parsedForceCC = _forceUseCC(ped.parsed, forceUseCC);
           ped.formatted = _formatNumberStr(ped.parsedForceCC);
         }
+      }
+      if (ped.wellFormed) {
+        console.log(ped);
       }
       return ped;
     },
