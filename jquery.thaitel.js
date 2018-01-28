@@ -8,7 +8,7 @@
  *  Github: https://github.com/sovoboys/jQuery.thaiTel
  *  Version: 0.0.1
  */
- 
+
 (function($){
 $.fn.thaiTel = function(options, param2){
 
@@ -186,9 +186,6 @@ $.fn.thaiTel = function(options, param2){
           ped.parsedForceCC = _forceUseCC(ped.parsed, forceUseCC);
           ped.formatted = _formatNumberStr(ped.parsedForceCC);
         }
-      }
-      if (ped.wellFormed) {
-        console.log(ped);
       }
       return ped;
     },
