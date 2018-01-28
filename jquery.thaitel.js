@@ -8,8 +8,8 @@
  *  Github: https://github.com/sovoboys/jQuery.thaiTel
  *  Version: 0.0.1
  */
-
- (function($){
+ 
+(function($){
 $.fn.thaiTel = function(options, param2){
 
   // handle given params

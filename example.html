@@ -7,6 +7,7 @@
   <title>jQuery.thaiTel</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
   <style type="text/css">
     .panel-title{
       font-size: 1em
@@ -25,75 +26,126 @@
       font-style: italic;
     }
   </style>
+
 </head>
 
 <body>
+
   <div class="container-fluid">
     <div class="page-heading">
       <h1>jQuery.thaiTel</h1>
       <hr>
     </div>
   </div>
-  <div id="example-section" class="container-fluid">
+
+  <!-- ▼ #example-section ▼ -->
+  <section id="example-section" class="container-fluid">
     <div class="page-heading">
-      <h2>Example</h2>
+      <h2>Example <small>(default action)</small></h2>
     </div>
     <div class="row">
-      <div class="col-lg-4 col-md-6 col-sm-6">
 
-
-
-
-
-
-
-
-
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <h4 class="panel-title"></h4>
-          </div>
-          <div data-phone-number="+66 (0)98-765-4321" class="panel-body"></div>
-        </div>
-      </div>
       <div class="col-lg-4 col-md-6 col-sm-6">
         <div class="panel panel-default">
           <div class="panel-heading">
             <h4 class="panel-title"></h4>
           </div>
-          <div data-phone-number="055 123 456-7" class="panel-body"></div>
+          <div data-phone-number="+66 2 345 6789" class="panel-body"></div>
+          <div class="panel-footer text-muted">Single and simple one number</div>
         </div>
       </div>
+
       <div class="col-lg-4 col-md-6 col-sm-6">
         <div class="panel panel-default">
           <div class="panel-heading">
             <h4 class="panel-title"></h4>
           </div>
-          <div data-phone-number="055 123 456-7" data-force-cc="+66" class="panel-body"></div>
+          <div data-phone-number="02-345-6789-91, 098-765-4321" class="panel-body"></div>
+          <div class="panel-footer text-muted">Range numbers (notice 89-91), and multi numbers seperated using comma</div>
         </div>
       </div>
+
       <div class="col-lg-4 col-md-6 col-sm-6">
         <div class="panel panel-default">
           <div class="panel-heading">
             <h4 class="panel-title"></h4>
           </div>
-          <div data-phone-number="023 456 789 ต่อ 2315" class="panel-body"></div>
+          <div data-phone-number="055 666777" data-force-cc="+66" class="panel-body"></div>
+          <div class="panel-footer text-muted">Notice [data-force-cc]</div>
         </div>
       </div>
+
       <div class="col-lg-4 col-md-6 col-sm-6">
         <div class="panel panel-default">
           <div class="panel-heading">
             <h4 class="panel-title"></h4>
           </div>
-          <div data-phone-number="1234567890-11 abcdefg???" class="panel-body"></div>
+          <div data-phone-number="02 2000001-10" class="panel-body"></div>
+          <div class="panel-footer text-muted">Try 10 numbers range</div>
         </div>
       </div>
+
+      <div class="col-lg-4 col-md-6 col-sm-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h4 class="panel-title"></h4>
+          </div>
+          <div data-phone-number="
+            023 456 789,
+            191,
+            05 566-6777,
+            09 87 65 43 21 - 322,
+            1112,
+            +66 9 8 7 6 5 4 3 2 1
+          " class="panel-body"></div>
+          <div class="panel-footer text-muted">Weired (but seems legit) input. * Notice some unparsable numbers that be discarded.</div>
+        </div>
+      </div>
+
+      <div class="col-lg-4 col-md-6 col-sm-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h4 class="panel-title"></h4>
+          </div>
+          <div data-phone-number="123, Lorem ipsum dolor sit amet prayut dafuq" class="panel-body"></div>
+          <div class="panel-footer text-muted">Example of (ALL) invalid/unparsable data</div>
+        </div>
+      </div>
+
+
+
     </div>
-  </div>
+  </section>
 
+  <script type="text/javascript">
+  $(function (){
+    // ▼ example part ▼
+
+    // add .panel>.panel-title with its [data-phone-number]
+    $('.panel-body[data-phone-number]').each(function (_, e){
+      let $title = $(e).prev('.panel-heading').find('>.panel-title');
+      $title.text('[data-phone-number="' + $(e).data('phoneNumber') + '"]' + ($(e).data('forceCc') ? '[data-force-cc="' + $(e).data('forceCc') + '"]' : ''));
+    });
+
+    if (typeof jQuery == typeof function(){}) {
+      if ($.fn.thaiTel) {
+        // call the plugin (for example section)
+        $('#example-section [data-phone-number]').thaiTel();
+      } else {
+        alert('Error: $.fn.thaiTel. required.');
+        console.error('Error: $.fn.thaiTel. required.');
+      }
+    } else {
+      alert('Error: jQuery required.');
+      console.error('Error: Requires jQuery.');
+    }
+    // ▲ example part ▲
+  });
+  </script>
+  <!-- ▲ #example-section ▲ -->
   <hr>
-
-  <div id="test-section" class="container-fluid">
+  <!-- ▼ #test-section ▼ -->
+  <section id="test-section" class="container-fluid">
     <div class="page-heading">
       <h1>Test</h1>
       <hr>
@@ -124,34 +176,10 @@
         </table>
       </div>
     </div>
-  </div>
-
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
-  <script type="text/javascript" src="jquery.thaitel.js"></script>
+  </section>
   <script type="text/javascript">
   $(function (){
-
-    // ********** example section **********************************************
-
-    // to add title text to each example
-    $('.panel-body[data-phone-number]').each(function (_, e){
-      let $title = $(e).prev('.panel-heading').find('>.panel-title');
-      $title.text('[data-phone-number="' + $(e).data('phoneNumber') + '"]' + ($(e).data('forceCc') ? '[data-force-cc="' + $(e).data('forceCc') + '"]' : ''));
-    });
-
-    if (typeof jQuery == typeof function(){}) {
-      if ($.fn.thaiTel) {
-        // call the plugin (for example section)
-        $('#example-section [data-phone-number]').thaiTel();
-      } else {
-        console.error('Requires $.fn.thaiTel.');
-      }
-    } else {
-      alert('Error: jQuery required.');
-      console.error('Error: Requires jQuery.');
-    }
-
-    // ********** test section *************************************************
+    // ▼ test part ▼
     let
       testData = [
         'Simple format',
@@ -237,14 +265,20 @@
           },
         });
       } else {
-        console.error('Requires $.fn.thaiTel.');
+        alert('Error: $.fn.thaiTel. required.');
+        console.error('Error: $.fn.thaiTel. required.');
       }
     } else {
       alert('Error: jQuery required.');
       console.error('Error: Requires jQuery.');
     }
-
+    // ▲ test part ▲
   });
   </script>
+  <!-- ▲ #test-section ▲ -->
+
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="jquery.thaitel.js"></script>
+
 </body>
 </html>
