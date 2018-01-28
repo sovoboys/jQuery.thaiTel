@@ -68,7 +68,7 @@ $('[data-phone-number]').thaiTel(function () {
 _(function)_ options.render will be called if one or more phone numbers parsed and returned.
 
 |No.|Data type|Description|Example|
-|--:|:--|:--|:--|:--|
+|--:|:--------|:----------|:------|
 |1|_(Array contains one or more objects)_   |All parsed phone numbers | _(see [Parsed phone numbers data](#parsed-phone-numbers-data) below)_|
 |2|_(jQuery instance)_                      |each element that called this plugin      |-|
 |3|_(String)_                               |Input data ([data-phone-number] attribute value)| ```"098-765-4321"```|
@@ -115,7 +115,7 @@ $('[data-phone-number]').thaiTel({
 _(function)_ options.fail is similar as options.render, except it will be called if **none** of phone numbers be parsed and return.
 
 |No.|Data type|Description|Example|
-|--:|:--|:--|:--|:--|
+|--:|:--------|:----------|:------|
 |1|_(jQuery instance)_                      |each element that called this plugin      |-|
 |2|_(String)_                               |Input data ([data-phone-number] attribute value)| ```"1112"```|
 
@@ -136,7 +136,7 @@ $('[data-phone-number]').thaiTel({
 
 ## **Disclaimer**
 
-**You are responsible for your own actions** - This plugin **CANNOT GUARANTEE** the accuracy of any data conversion. Users may be charges for dialing to wrong numbers.
+**This plugin CANNOT GUARANTEE** the accuracy of any data conversion. Users may be charges for dialing to wrong numbers.
 
 ---
 
