@@ -6,7 +6,7 @@
  *  http://www.wtfpl.net/
  *
  *  Github: https://github.com/sovoboys/jQuery.thaiTel
- *  Version: 0.0.1
+ *  Version: 0.0.2
  */
 
 (function($){
@@ -83,21 +83,21 @@ $.fn.thaiTel = function(options, param2){
         // ▼ numbers ▼
         '[\\-\\— ]*' +
         '(?:' +
-            // ▼ starts with 2 or [8-9][0-9] ▼
-            '(2|[89] *[0-9])' +   // starts with 2 or [8-9][0-9]
+            // ▼ starts with 2 or [689][0-9] ▼
+            '(2|[689] *[0-9])' +   // starts with 2 or [8-9][0-9]
             '[\\-\\— ]*' +
             '(' +
               '(?:[0-9][\\-\\— ]*){6}[0-9]' +  // and 7 digits after
             ')' +
             // ▲ starts with 2 or [8-9][0-9] ▲
           '|' +   // ..or..
-            // ▼ starts with [3-7][1-9] ▼
-            '([3-7] *[1-9])' +  // starts with [3-7][1-9]
+            // ▼ starts with [3457][1-9] ▼
+            '([3457] *[1-9])' +  // starts with [3457][1-9]
             '[\\-\\— ]*' +
             '(' +
               '(?:[0-9][\\-\\— ]*){5}[0-9]' +  // and 6 digits after
             ')' +
-            // ▲ starts with [3-7][1-9] ▲
+            // ▲ starts with [3457][1-9] ▲
         ')' +
         // ▲ numbers ▲
         ' *' +
@@ -158,9 +158,9 @@ $.fn.thaiTel = function(options, param2){
           captured data should be
           e[1] = undefined (unless e[2]) || (cc) 0
           e[2] = undefined (unless e[1]) || (cc) \+?66
-          e[3] = undefined (unless e[5]) || 2|[89][0-9]
+          e[3] = undefined (unless e[5]) || 2|[689][0-9]
           e[4] = undefined (unless e[6]) || {7 digit number after e[3]}
-          e[5] = undefined (unless e[3]) || [3-7][0-9]
+          e[5] = undefined (unless e[3]) || [3457][0-9]
           e[6] = undefined (unless e[4]) || {6 digit number after e[5]}
           e[7] = || .* after e[4] or e[6]           * more validation required
         **/
@@ -226,8 +226,8 @@ $.fn.thaiTel = function(options, param2){
     },
     _formatNumberStr = function (str) {
       let regex1 = /^(\+66|0)(2)([0-9]{3})([0-9]{4})$/,
-        regex2 = /^(\+66|0)([89][0-9])([0-9]{3})([0-9]{4})$/,
-        regex3 = /^(\+66|0)([3-7][1-9])([0-9]{3})([0-9]{3})$/;
+        regex2 = /^(\+66|0)([689][0-9])([0-9]{3})([0-9]{4})$/,
+        regex3 = /^(\+66|0)([3457][1-9])([0-9]{3})([0-9]{3})$/;
       if (regex1.test(str)) {
         return str.replace(regex1, '$1$2-$3-$4');
       } else if (regex2.test(str)) {
