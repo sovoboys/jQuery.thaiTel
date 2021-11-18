@@ -5,7 +5,7 @@ This plugin is written for dealing with **(~~mainly,~~ actually only) Thai phone
 
 ## **Example**
 
-See [https://www.sovoboys.net/github/jquery.thaitel](https://www.sovoboys.net/github/jquery.thaitel)
+See [https://www.sovoboys.net/ui/js/jQuery.thaiTel/example.html](https://www.sovoboys.net/ui/js/jQuery.thaiTel/example.html)
 
 
 ## **Usage**
